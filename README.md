@@ -1,4 +1,4 @@
-# plugget blender addon
+# Plugget installer add-on
 A blender add-on to install [plugget](https://github.com/hannesdelbeke/plugget)
 
 ## Installation
