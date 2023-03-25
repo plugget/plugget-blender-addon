@@ -1,5 +1,5 @@
 # plugget blender addon
-a Blender add-on wrapper for [plugget](https://github.com/hannesdelbeke/plugget)
+A blender add-on to install [plugget](https://github.com/hannesdelbeke/plugget)
 
 ## Installation
 1. download this repo as a zip and extract the zip. ensure you have the file `plugget_addon.py`
