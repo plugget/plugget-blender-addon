@@ -64,9 +64,6 @@ class PluggetPreferences(bpy.types.AddonPreferences):
         layout = self.layout
 
         if plugget_is_installed():
-
-            layout.label(text="Plugget is installed")
-
             row = layout.row()
             search_btn = row.operator("wm.search_plugget_packages", text="Search")
             search_txt = row.prop(self, "text_input")
@@ -85,9 +82,8 @@ class PluggetPreferences(bpy.types.AddonPreferences):
                 else:
                     install_btn = row.operator("wm.install_plugget_package", text="Install")
                     install_btn.package_name = package.package_name
+                    install_btn.tooltip = package.description if hasattr(package, "description") else package.package_name
 
-                # row.label(text=package.description)
-                # row.operator("wm.install_package", text="Install")
 
             # todo show buttons to search packages.
             # +----------------------+----------+
@@ -131,11 +127,16 @@ class InstallPluggetPackageOperator(bpy.types.Operator):
         description="package name",
         default=""
     )
+    tooltip: bpy.props.StringProperty()
 
     def execute(self, context):
         import plugget.commands as cmd
         cmd.install(self.package_name) # todo output log
         return {'FINISHED'}
+
+    @classmethod
+    def description(cls, context, properties):
+        return properties.tooltip
 
 
 class UninstallPluggetPackageOperator(bpy.types.Operator):
