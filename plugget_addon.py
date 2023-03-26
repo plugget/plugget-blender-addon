@@ -78,7 +78,9 @@ class PluggetPreferences(bpy.types.AddonPreferences):
                 row.label(text=package.version)
                 if package.is_installed:
                     # update_btn = row.operator("wm.update_plugget_package", text="Update")  # todo
-                    uninstall_btn = row.operator("wm.uninstall_plugget_package", text="Uninstall")
+                    uninstall_row = row.row()
+                    uninstall_row.alert = True
+                    uninstall_btn = uninstall_row.operator("wm.uninstall_plugget_package", text="Uninstall")
                     uninstall_btn.package_name = package.package_name
                 else:
                     install_btn = row.operator("wm.install_plugget_package", text="Install")
