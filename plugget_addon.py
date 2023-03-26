@@ -11,6 +11,7 @@ bl_info = {
 import sys
 import bpy
 import subprocess
+import importlib
 from pathlib import Path
 
 
@@ -37,6 +38,7 @@ def install_plugget():
         output = subprocess.check_output(command, stderr=subprocess.STDOUT)
         print(output.decode())
         output_log = output.decode()
+        importlib.invalidate_caches()  # refresh dynamic added py modules, ensuring they are importable
     except subprocess.CalledProcessError as e:
         print(e.output.decode())
         output_log = e.output.decode()
