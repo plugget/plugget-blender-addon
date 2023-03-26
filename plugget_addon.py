@@ -16,6 +16,7 @@ from pathlib import Path
 
 
 output_log = "Installing..."
+packages_found = []
 
 
 def plugget_is_installed():
@@ -51,12 +52,56 @@ def install_plugget():
 class PluggetPreferences(bpy.types.AddonPreferences):
     bl_idname = __name__
     output = output_log
+    text_input: bpy.props.StringProperty(
+        name="",
+        description="Search package name",
+        default=""
+    )
 
     def draw(self, context):
+        global packages_found
+
         layout = self.layout
 
         if plugget_is_installed():
+
+            import plugget.commands as cmds
+            installed_packages = [x.package_name for x in cmds.list()]
+
             layout.label(text="Plugget is installed")
+
+            row = layout.row()
+            search_btn = row.operator("wm.search_plugget_packages", text="Search")
+            search_txt = row.prop(self, "text_input")
+            # todo row.scale_x = 2
+
+            print(packages_found)
+            for package in packages_found:
+                row = layout.row()
+                row.label(text=package.package_name)
+                row.label(text=package.version)
+                if package.package_name not in installed_packages:
+                    install_btn = row.operator("wm.install_plugget_package", text="Install")
+                    install_btn.package_name = package.package_name
+                else:
+                    row.label(text="Installed")
+                # row.label(text=package.description)
+                # row.operator("wm.install_package", text="Install")
+
+            # todo show buttons to search packages.
+            # +----------------------+----------+
+            # |        Search        |  Update  |
+            # +----------------------+----------+
+            # | Package A v1.0       | Install  |
+            # | Short description    |          |
+            # +----------------------+----------+
+            # | Package B v1.2       | Install  |
+            # | Short description    |          |
+            # +----------------------+----------+
+            # | Package C v2.1       | Update   |
+            # | Short description    |          |
+            # +----------------------+----------+
+
         else:
             layout.operator("wm.install_plugget", text="Install Plugget (requires internet connection)")
 
@@ -77,15 +122,49 @@ class InstallPluggetOperator(bpy.types.Operator):
         install_plugget()
         return {'FINISHED'}
 
+class InstallPluggetPackageOperator(bpy.types.Operator):
+    bl_idname = "wm.install_plugget_package"
+    bl_label = "Install a Plugget Package"
+    # package: bpy.props.PointerProperty(type=plugget.data.Package)
+    package_name: bpy.props.StringProperty(
+        name="package_name",
+        description="package name",
+        default=""
+    )
+
+    def execute(self, context):
+        import plugget.commands as cmd
+        cmd.install(self.package_name) # todo output log
+        return {'FINISHED'}
+
+
+class SearchPluggetPackageOperator(bpy.types.Operator):
+    bl_idname = "wm.search_plugget_packages"
+    bl_label = "Search Plugget Packages"
+
+    def execute(self, context):
+        import plugget.commands as cmd
+        global packages_found
+        addon_prefs = context.preferences.addons[__name__].preferences
+        result = cmd.search(addon_prefs.text_input)
+        print(result)
+        packages_found = result
+        # self.report({'INFO'}, "Updated packages_found value")
+        return {'FINISHED'}
+
 
 def register():
     bpy.utils.register_class(PluggetPreferences)
+    bpy.utils.register_class(SearchPluggetPackageOperator)
+    bpy.utils.register_class(InstallPluggetPackageOperator)
     bpy.utils.register_class(InstallPluggetOperator)
     install_plugget()
 
 
 def unregister():
     bpy.utils.unregister_class(PluggetPreferences)
+    bpy.utils.unregister_class(SearchPluggetPackageOperator)
+    bpy.utils.unregister_class(InstallPluggetPackageOperator)
     bpy.utils.unregister_class(InstallPluggetOperator)
 
 
