@@ -18,14 +18,18 @@ from pathlib import Path
 output_log = "Installing..."
 
 
+def plugget_is_installed():
+    try:
+        import plugget
+        return True
+    except ImportError:
+        return False
+
 def install_plugget():
     global output_log
 
-    try:
-        import plugget
+    if plugget_is_installed():
         return
-    except ImportError:
-        pass
 
     blender_user_site_packages = Path(bpy.utils.script_path_user()) / "addons/modules"  # appdata
 
@@ -51,10 +55,9 @@ class PluggetPreferences(bpy.types.AddonPreferences):
     def draw(self, context):
         layout = self.layout
 
-        try:
-            import plugget
+        if plugget_is_installed():
             layout.label(text="Plugget is installed")
-        except ImportError:
+        else:
             layout.operator("wm.install_plugget", text="Install Plugget (requires internet connection)")
 
             for l in output_log.splitlines():
