@@ -15,7 +15,7 @@ import importlib
 from pathlib import Path
 
 
-output_log = ""
+output_log = "Installing..."
 
 
 def install_plugget():
