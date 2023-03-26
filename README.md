@@ -2,6 +2,9 @@
 A blender add-on to install [plugget](https://github.com/hannesdelbeke/plugget)
 
 ## Installation
+### Using the blend file installer (recommended)
+Download and open the [blend file](https://github.com/hannesdelbeke/plugget-blender-addon/raw/main/installer/install_plugget_addon.blend), and run the scripts inside to auto install the add-on.
+### Manual installation
 1. download this repo as a zip and extract the zip. ensure you have the file `plugget_addon.py`
 2. Go to `Edit/Preferences... (menu) -> add-ons (tab)` and click `Install` button
 3. Browse to the `plugget_addon.py`
