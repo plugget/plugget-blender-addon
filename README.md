@@ -1,6 +1,8 @@
 # Plugget installer add-on
 A blender add-on to install [plugget](https://github.com/hannesdelbeke/plugget)
 
+![preview of the plugget add-on UI](https://user-images.githubusercontent.com/3758308/228056063-2c98f14b-1aea-4150-90b1-d8a0599e6b08.png)
+
 ## Installation
 
 <details>
