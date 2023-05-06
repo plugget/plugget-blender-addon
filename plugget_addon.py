@@ -13,6 +13,9 @@ import bpy
 import subprocess
 import importlib
 from pathlib import Path
+import bpy
+import requests
+import json
 
 
 output_log = "Installing..."
@@ -49,6 +52,69 @@ def install_plugget():
         output_log = e.output.decode()
 
 
+
+class GitHubFavoritesPanel(bpy.types.AddonPreferences):
+    bl_idname = "GitHubFavoritesPanel" #__name__
+
+    github_username: bpy.props.StringProperty(
+        name="GitHub Username",
+        description="Enter your GitHub username",
+        default=""
+    )
+
+    github_token: bpy.props.StringProperty(
+        name="GitHub Personal Access Token",
+        description="Enter your GitHub Personal Access Token",
+        default=""
+    )
+
+    def draw(self, context):
+        layout = self.layout
+
+        # Create a box to group the UI elements
+        box = layout.box()
+
+        # Add a label to the box
+        box.label(text="GitHub Favorites")
+
+        # Add a text field for entering the username
+        box.prop(self, "github_username")
+
+        # Add a text field for entering the Personal Access Token
+        box.prop(self, "github_token")
+
+        # Add a button to retrieve the user's favorites
+        box.operator("object.get_github_favorites")
+
+class GetGitHubFavoritesOperator(bpy.types.Operator):
+    bl_idname = "object.get_github_favorites"
+    bl_label = "Get Favorites"
+
+    def execute(self, context):
+        prefs = bpy.context.preferences.addons[__name__].preferences
+        username = prefs.github_username
+        # token = prefs.github_token
+
+        # headers = {
+        #     "Authorization": f"token {token}"
+        # }
+        url = f"https://api.github.com/users/{username}/starred"
+
+        try:
+            response = requests.get(url) #, headers=headers)
+            if response.ok:
+                favorites = json.loads(response.text)
+                print(favorites)
+                for favorite in favorites:
+                    print(favorite["full_name"])
+            else:
+                print(f"Error: {response.status_code}")
+        except Exception as e:
+            print(f"Error: {e}")
+
+        return {"FINISHED"}
+
+
 class PluggetPreferences(bpy.types.AddonPreferences):
     bl_idname = __name__
     output = output_log
@@ -57,6 +123,19 @@ class PluggetPreferences(bpy.types.AddonPreferences):
         description="Search package name",
         default=""
     )
+
+    github_username: bpy.props.StringProperty(
+        name="GitHub Username",
+        description="Enter your GitHub username",
+        default=""
+    )
+
+    github_token: bpy.props.StringProperty(
+        name="GitHub Personal Access Token",
+        description="Enter your GitHub Personal Access Token",
+        default=""
+    )
+
 
     def draw(self, context):
         global packages_found
@@ -71,8 +150,29 @@ class PluggetPreferences(bpy.types.AddonPreferences):
 
             for package in packages_found:
                 row = layout.row()
+
+                # starred / favorited
+                if package.is_starred():
+                    star_btn = row.label(icon="FUND")
+                else:
+                    star_btn = row.label(icon="HEART")
+                    # star_btn.package_name = package.package_name
+
+
+                # stars
+                stars = package.get_stars()
+                # if more than 1000 stars, show 1k
+                if stars >= 1000:
+                    stars = f"{stars/1000:.1f}k"
+                row.label(text=str(f"{stars} ★"))
+
+                # name
                 row.label(text=package.package_name)
+
+                # version
                 row.label(text=package.version)
+
+                # button
                 if package.is_installed:
                     # update_btn = row.operator("wm.update_plugget_package", text="Update")  # todo
                     uninstall_row = row.row()
@@ -83,6 +183,7 @@ class PluggetPreferences(bpy.types.AddonPreferences):
                     install_btn = row.operator("wm.install_plugget_package", text="Install")
                     install_btn.package_name = package.package_name
                     install_btn.tooltip = package.description if hasattr(package, "description") else package.package_name
+
 
 
             # todo show buttons to search packages.
@@ -109,6 +210,22 @@ class PluggetPreferences(bpy.types.AddonPreferences):
                     col.label(text=l)
                 else:
                     layout.label(text=l)
+
+
+        # Create a box to group the UI elements
+        box = layout.box()
+
+        # Add a label to the box
+        box.label(text="GitHub Favorites")
+
+        # Add a text field for entering the username
+        box.prop(self, "github_username")
+
+        # Add a text field for entering the Personal Access Token
+        box.prop(self, "github_token")
+
+        # Add a button to retrieve the user's favorites
+        box.operator("object.get_github_favorites")
 
 
 class InstallPluggetOperator(bpy.types.Operator):
@@ -169,6 +286,9 @@ class SearchPluggetPackageOperator(bpy.types.Operator):
 
 
 def register():
+    bpy.utils.register_class(GitHubFavoritesPanel)
+    bpy.utils.register_class(GetGitHubFavoritesOperator)
+
     bpy.utils.register_class(PluggetPreferences)
     bpy.utils.register_class(SearchPluggetPackageOperator)
     bpy.utils.register_class(InstallPluggetPackageOperator)
@@ -178,6 +298,9 @@ def register():
 
 
 def unregister():
+    bpy.utils.unregister_class(GitHubFavoritesPanel)
+    bpy.utils.unregister_class(GetGitHubFavoritesOperator)
+
     bpy.utils.unregister_class(PluggetPreferences)
     bpy.utils.unregister_class(SearchPluggetPackageOperator)
     bpy.utils.unregister_class(InstallPluggetPackageOperator)
