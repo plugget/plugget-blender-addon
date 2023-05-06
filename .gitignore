@@ -130,3 +130,5 @@ dmypy.json
 
 # temp blend files
 *.blend1
+
+.idea
