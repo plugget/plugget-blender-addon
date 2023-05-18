@@ -73,9 +73,8 @@ class PluggetPreferences(bpy.types.AddonPreferences):
                 row = layout.row()
                 row.label(text=meta_packages.package_name)
 
-                meta_packages
+                # meta_packages
                 # row.label(text=package.version) # todo replace with dropdown
-
 
                 if any(x.is_installed for x in meta_packages.packages):
                 # if package.is_installed:
@@ -83,7 +82,7 @@ class PluggetPreferences(bpy.types.AddonPreferences):
                     uninstall_row = row.row()
                     uninstall_row.alert = True
                     uninstall_btn = uninstall_row.operator("wm.uninstall_plugget_package", text="Uninstall")
-                    uninstall_btn.package_name = package.package_name
+                    uninstall_btn.package_name = meta_packages.package_name
                 else:
                     install_btn = row.operator("wm.install_plugget_package", text="Install")
                     install_btn.package_name = meta_packages.package_name
