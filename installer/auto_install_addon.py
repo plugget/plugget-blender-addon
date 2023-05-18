@@ -32,8 +32,8 @@ with tempfile.TemporaryDirectory() as tmpdir:
     shutil.unpack_archive(filename, tmpdir)
 
     # Move the plugget_addon.py file to the addon folder
-    source_path = os.path.join(tmpdir, "plugget-blender-addon-main", "plugget_addon.py")
-    target_path = os.path.join(local_addons_dir, "plugget_addon.py")
+    source_path = os.path.join(tmpdir, "plugget-blender-addon-main", "plugget_addon")
+    target_path = os.path.join(local_addons_dir, "plugget_addon")
     shutil.move(source_path, target_path)
 
 # Enable the addon in Blender
