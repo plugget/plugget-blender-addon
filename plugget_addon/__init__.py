@@ -69,11 +69,16 @@ class PluggetPreferences(bpy.types.AddonPreferences):
             search_txt = row.prop(self, "text_input")
             # todo row.scale_x = 2
 
-            for package in packages_found:
+            for meta_packages in packages_found:
                 row = layout.row()
-                row.label(text=package.package_name)
-                row.label(text=package.version)
-                if package.is_installed:
+                row.label(text=meta_packages.package_name)
+
+                meta_packages
+                # row.label(text=package.version) # todo replace with dropdown
+
+
+                if any(x.is_installed for x in meta_packages.packages):
+                # if package.is_installed:
                     # update_btn = row.operator("wm.update_plugget_package", text="Update")  # todo
                     uninstall_row = row.row()
                     uninstall_row.alert = True
@@ -81,9 +86,8 @@ class PluggetPreferences(bpy.types.AddonPreferences):
                     uninstall_btn.package_name = package.package_name
                 else:
                     install_btn = row.operator("wm.install_plugget_package", text="Install")
-                    install_btn.package_name = package.package_name
-                    install_btn.tooltip = package.description if hasattr(package, "description") else package.package_name
-
+                    install_btn.package_name = meta_packages.package_name
+                    install_btn.tooltip = meta_packages.description if hasattr(meta_packages, "description") else meta_packages.package_name
 
             # todo show buttons to search packages.
             # +----------------------+----------+
