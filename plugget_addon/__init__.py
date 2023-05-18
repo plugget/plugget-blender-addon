@@ -8,7 +8,7 @@ bl_info = {
     "category": "Development",
 }
 
-import sys
+import sys, os
 import bpy
 import subprocess
 import importlib
@@ -25,6 +25,7 @@ def plugget_is_installed():
         return True
     except ImportError:
         return False
+
 
 def install_plugget():
     global output_log
@@ -58,6 +59,14 @@ class PluggetPreferences(bpy.types.AddonPreferences):
         default=""
     )
 
+    def get_plugget_path(self, attr_name: str) -> str:
+        """Get attr by name from plugget.settings as string, used to get path-constants"""
+        try:
+            import plugget
+            return str(getattr(plugget.settings, attr_name))
+        except ImportError:
+            return ""
+
     def draw(self, context):
         global packages_found
 
@@ -65,7 +74,13 @@ class PluggetPreferences(bpy.types.AddonPreferences):
 
         if plugget_is_installed():
             row = layout.row()
-            search_btn = row.operator("wm.search_plugget_packages", text="Search")
+            row.label(text="dev folders:")
+            row.operator("util.open_folder", text="installed packages", icon="FILE_FOLDER").folder_path = self.get_plugget_path("INSTALLED_DIR")
+            row.operator("util.open_folder", text="settings", icon="FILE_FOLDER").folder_path = self.get_plugget_path("PLUGGET_DIR")
+            row.operator("util.open_folder", text="temp", icon="FILE_FOLDER").folder_path = self.get_plugget_path("TEMP_PLUGGET")
+
+            row = layout.row()
+            search_btn = row.operator("plugget.search_packages", text="Search")
             search_txt = row.prop(self, "text_input")
             # todo row.scale_x = 2
 
@@ -78,13 +93,13 @@ class PluggetPreferences(bpy.types.AddonPreferences):
 
                 if any(x.is_installed for x in meta_packages.packages):
                 # if package.is_installed:
-                    # update_btn = row.operator("wm.update_plugget_package", text="Update")  # todo
+                    # update_btn = row.operator("plugget.update_package", text="Update")  # todo
                     uninstall_row = row.row()
                     uninstall_row.alert = True
-                    uninstall_btn = uninstall_row.operator("wm.uninstall_plugget_package", text="Uninstall")
+                    uninstall_btn = uninstall_row.operator("plugget.uninstall_package", text="Uninstall")
                     uninstall_btn.package_name = meta_packages.package_name
                 else:
-                    install_btn = row.operator("wm.install_plugget_package", text="Install")
+                    install_btn = row.operator("plugget.install_package", text="Install")
                     install_btn.package_name = meta_packages.package_name
                     install_btn.tooltip = meta_packages.description if hasattr(meta_packages, "description") else meta_packages.package_name
 
@@ -103,7 +118,7 @@ class PluggetPreferences(bpy.types.AddonPreferences):
             # +----------------------+----------+
 
         else:
-            layout.operator("wm.install_plugget", text="Install Plugget (requires internet connection)")
+            layout.operator("plugget.install_plugget", text="Install Plugget (requires internet connection)")
 
             for l in output_log.splitlines():
                 if "ERROR" in l:
@@ -115,7 +130,7 @@ class PluggetPreferences(bpy.types.AddonPreferences):
 
 
 class InstallPluggetOperator(bpy.types.Operator):
-    bl_idname = "wm.install_plugget"
+    bl_idname = "plugget.install_plugget"
     bl_label = "Install the Plugget Python module"
 
     def execute(self, context):
@@ -123,7 +138,7 @@ class InstallPluggetOperator(bpy.types.Operator):
         return {'FINISHED'}
 
 class InstallPluggetPackageOperator(bpy.types.Operator):
-    bl_idname = "wm.install_plugget_package"
+    bl_idname = "plugget.install_package"
     bl_label = "Install a Plugget Package"
     package_name: bpy.props.StringProperty(
         name="package_name",
@@ -143,7 +158,7 @@ class InstallPluggetPackageOperator(bpy.types.Operator):
 
 
 class UninstallPluggetPackageOperator(bpy.types.Operator):
-    bl_idname = "wm.uninstall_plugget_package"
+    bl_idname = "plugget.uninstall_package"
     bl_label = "Uninstall a Plugget Package"
     package_name: bpy.props.StringProperty(
         name="package_name",
@@ -159,7 +174,7 @@ class UninstallPluggetPackageOperator(bpy.types.Operator):
 
 
 class SearchPluggetPackageOperator(bpy.types.Operator):
-    bl_idname = "wm.search_plugget_packages"
+    bl_idname = "plugget.search_packages"
     bl_label = "Search Plugget Packages"
 
     def execute(self, context):
@@ -171,12 +186,33 @@ class SearchPluggetPackageOperator(bpy.types.Operator):
         return {'FINISHED'}
 
 
+class OpenFolderOperator(bpy.types.Operator):
+    bl_idname = "util.open_folder"
+    bl_label = "Open Folder"
+    bl_icon = "FILE_FOLDER"
+
+    folder_path: bpy.props.StringProperty()
+
+    def execute(self, context):
+        print("open self.folder_path", self.folder_path)
+        if os.name == 'nt':
+            os.startfile(self.folder_path)
+        elif os.name == 'posix':
+            if sys.platform == 'darwin':
+                os.system(f'open "{self.folder_path}"')
+            else:
+                os.system(f'xdg-open "{self.folder_path}"')
+
+        return {'FINISHED'}
+
+
 def register():
     bpy.utils.register_class(PluggetPreferences)
     bpy.utils.register_class(SearchPluggetPackageOperator)
     bpy.utils.register_class(InstallPluggetPackageOperator)
     bpy.utils.register_class(UninstallPluggetPackageOperator)
     bpy.utils.register_class(InstallPluggetOperator)
+    bpy.utils.register_class(OpenFolderOperator)
     install_plugget()
 
 
@@ -186,6 +222,7 @@ def unregister():
     bpy.utils.unregister_class(InstallPluggetPackageOperator)
     bpy.utils.unregister_class(UninstallPluggetPackageOperator)
     bpy.utils.unregister_class(InstallPluggetOperator)
+    bpy.utils.unregister_class(OpenFolderOperator)
 
 
 
