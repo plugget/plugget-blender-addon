@@ -57,7 +57,7 @@ def install_plugget():
 
     # Run the command to install the plugget package using pip and the Python executable
     try:
-        command = [python_executable, '-f' '-m', 'pip', 'install', 'plugget', '-t', str(blender_user_site_packages)]
+        command = [python_executable, '-m', 'pip', 'install', 'plugget', '-t', str(blender_user_site_packages), '--upgrade']
         output = subprocess.check_output(command, stderr=subprocess.STDOUT)
         print(output.decode())
         output_log = output.decode()
