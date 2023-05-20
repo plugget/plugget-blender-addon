@@ -17,6 +17,7 @@ import importlib
 from pathlib import Path
 import importlib.metadata
 import requests
+import shutil
 
 
 plugget_package_name = "plugget"
@@ -66,6 +67,27 @@ def install_plugget():
 
     # Get the path to the Python executable used by Blender
     python_executable = sys.executable
+
+    # todo confirm folder deleted, also dist info folder
+    # delete
+    plugget_module = blender_user_site_packages / "plugget"
+    # also check for dist info folder(s)
+    # e.g. plugget-0.0.5.dist-info
+    # iter all folders in blender_user_site_packages
+
+    # delete old plugget module and metadata
+    print("delete old plugget module and metadata")
+    delete_dirs = [plugget_module]
+    for p in plugget_module.iterdir():
+        if p.name.startswith("plugget-") and p.is_dir() and p.name.endswith(".dist-info"):
+            delete_dirs.append(p)
+    for p in delete_dirs:
+        if p.exists():
+            try:
+                print(f"Deleting {p}")
+                shutil.rmtree(p)
+            except Exception as e:
+                logging.error(e)
 
     # Run the command to install the plugget package using pip and the Python executable
     try:
