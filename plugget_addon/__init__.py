@@ -1,3 +1,5 @@
+import logging
+
 bl_info = {
     "name": "Plugget",
     "description": "easy install Plugget",
@@ -34,12 +36,22 @@ def get_latest_version(package_name):
         raise Exception(f"Failed to retrieve version for {package_name} from PyPI")
 
 
+def plugget_is_installed():
+    try:
+        import plugget
+        return True
+    except ImportError:
+        return False
+
+
 def latest_plugget_is_installed():
     try:
         latest_available_version = get_latest_version(plugget_package_name)
         installed_version = importlib.metadata.version(plugget_package_name)
         if installed_version == latest_available_version:
             return True
+        else:
+            logging.warning(f"Plugget Installed version: {installed_version}, latest version: {latest_available_version}")
     except:
         return False
 
@@ -89,7 +101,7 @@ class PluggetPreferences(bpy.types.AddonPreferences):
 
         layout = self.layout
 
-        if latest_plugget_is_installed():
+        if plugget_is_installed():
             row = layout.row()
             row.label(text="dev folders:")
             row.operator("util.open_folder", text="installed packages", icon="FILE_FOLDER").folder_path = self.get_plugget_path("INSTALLED_DIR")
