@@ -13,24 +13,41 @@ import bpy
 import subprocess
 import importlib
 from pathlib import Path
+import importlib.metadata
+import requests
 
 
+plugget_package_name = "plugget"
 output_log = "Installing..."
 packages_found = []
 
 
-def plugget_is_installed():
+def get_latest_version(package_name):
+    """get the latest version number for a package on PyPi"""
+    url = f"https://pypi.org/pypi/{package_name}/json"
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        version = data["info"]["version"]
+        return version
+    else:
+        raise Exception(f"Failed to retrieve version for {package_name} from PyPI")
+
+
+def latest_plugget_is_installed():
     try:
-        import plugget
-        return True
-    except ImportError:
+        latest_available_version = get_latest_version(plugget_package_name)
+        installed_version = importlib.metadata.version(plugget_package_name)
+        if installed_version == latest_available_version:
+            return True
+    except:
         return False
 
 
 def install_plugget():
     global output_log
 
-    if plugget_is_installed():
+    if latest_plugget_is_installed():
         return
 
     blender_user_site_packages = Path(bpy.utils.script_path_user()) / "addons/modules"  # appdata
@@ -40,7 +57,7 @@ def install_plugget():
 
     # Run the command to install the plugget package using pip and the Python executable
     try:
-        command = [python_executable, '-m', 'pip', 'install', 'plugget', '-t', str(blender_user_site_packages)]
+        command = [python_executable, '-f' '-m', 'pip', 'install', 'plugget', '-t', str(blender_user_site_packages)]
         output = subprocess.check_output(command, stderr=subprocess.STDOUT)
         print(output.decode())
         output_log = output.decode()
@@ -72,7 +89,7 @@ class PluggetPreferences(bpy.types.AddonPreferences):
 
         layout = self.layout
 
-        if plugget_is_installed():
+        if latest_plugget_is_installed():
             row = layout.row()
             row.label(text="dev folders:")
             row.operator("util.open_folder", text="installed packages", icon="FILE_FOLDER").folder_path = self.get_plugget_path("INSTALLED_DIR")
@@ -103,7 +120,6 @@ class PluggetPreferences(bpy.types.AddonPreferences):
                     install_btn.package_name = meta_packages.package_name
                     install_btn.tooltip = meta_packages.description if hasattr(meta_packages, "description") else meta_packages.package_name
 
-            # todo show buttons to search packages.
             # +----------------------+----------+
             # |        Search        |  Update  |
             # +----------------------+----------+
@@ -136,6 +152,7 @@ class InstallPluggetOperator(bpy.types.Operator):
     def execute(self, context):
         install_plugget()
         return {'FINISHED'}
+
 
 class InstallPluggetPackageOperator(bpy.types.Operator):
     bl_idname = "plugget.install_package"
