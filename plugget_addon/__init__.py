@@ -81,7 +81,7 @@ def install_plugget():
     # delete old plugget module and metadata
     logging.debug("delete old plugget module and metadata")
     delete_dirs = [plugget_module]
-    for p in plugget_module.iterdir():
+    for p in blender_user_site_packages.iterdir():
         if p.name.startswith("plugget-") and p.is_dir() and p.name.endswith(".dist-info"):
             delete_dirs.append(p)
     for p in delete_dirs:
