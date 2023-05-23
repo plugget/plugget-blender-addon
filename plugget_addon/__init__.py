@@ -65,7 +65,8 @@ def install_plugget():
     if latest_plugget_is_installed():
         return
 
-    blender_user_site_packages = Path(bpy.utils.script_path_user()) / "addons/modules"  # appdata
+    blender_user_site_packages = Path(bpy.utils.script_path_user()) / "addons" / "modules"  # appdata
+    blender_user_site_packages.mkdir(parents=True, exist_ok=True)
 
     # Get the path to the Python executable used by Blender
     python_executable = sys.executable
