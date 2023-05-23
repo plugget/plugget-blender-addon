@@ -42,6 +42,8 @@ def plugget_is_installed():
         import plugget
         return True
     except ImportError:
+        import traceback
+        traceback.print_exc()
         return False
 
 
@@ -76,7 +78,7 @@ def install_plugget():
     # iter all folders in blender_user_site_packages
 
     # delete old plugget module and metadata
-    print("delete old plugget module and metadata")
+    logging.debug("delete old plugget module and metadata")
     delete_dirs = [plugget_module]
     for p in plugget_module.iterdir():
         if p.name.startswith("plugget-") and p.is_dir() and p.name.endswith(".dist-info"):
@@ -84,7 +86,7 @@ def install_plugget():
     for p in delete_dirs:
         if p.exists():
             try:
-                print(f"Deleting {p}")
+                logging.debug(f"Deleting {p}")
                 shutil.rmtree(p)
             except Exception as e:
                 logging.error(e)
