@@ -149,15 +149,15 @@ class PluggetPreferences(bpy.types.AddonPreferences):
                 row.operator(OpenFolderOperator.bl_idname, text="plugget temp", icon="FILE_FOLDER").folder_path = self.get_plugget_path("TEMP_PLUGGET")
 
             row = layout.row()
-            list_btn = row.operator("plugget.list_packages", text="List installed", icon="COLLAPSEMENU")
-            search_btn = row.operator("plugget.search_packages", text="Search", icon="VIEWZOOM")
+            list_btn = row.operator(ListPluggetPackageOperator.bl_idname, text="List installed", icon="COLLAPSEMENU")
+            search_btn = row.operator(SearchPluggetPackageOperator.bl_idname, text="Search", icon="VIEWZOOM")
             search_txt = row.prop(self, "text_input")
 
             self._draw_package_list(layout) 
 
         else:
             # If plugget isn't installed, draw a button to install it
-            layout.operator("plugget.install_plugget", text="Install Plugget (requires internet connection)")
+            layout.operator(InstallPluggetOperator.bl_idname, text="Install Plugget (requires internet connection)")
 
             for l in output_log.splitlines():
                 if "ERROR" in l:
