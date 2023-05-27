@@ -107,10 +107,17 @@ def install_plugget():
 class PluggetPreferences(bpy.types.AddonPreferences):
     bl_idname = __name__
     output = output_log
+
     text_input: bpy.props.StringProperty(
         name="",
         description="Search package name",
         default=""
+    )
+    
+    advanced_mode: bpy.props.BoolProperty(
+        name="Advanced Mode",
+        description="Toggle advanced mode to show additional options",
+        default=False
     )
 
     def get_plugget_path(self, attr_name: str) -> str:
@@ -128,13 +135,20 @@ class PluggetPreferences(bpy.types.AddonPreferences):
 
         if plugget_is_installed():
             row = layout.row()
+                
             
-            local_script_dir = bpy.utils.script_path_user()
-            local_addons_dir = Path(local_script_dir) / "addons"
-            row.operator("util.open_folder", text="addons", icon="FILE_FOLDER").folder_path = local_addons_dir
-            row.operator("util.open_folder", text="package configs", icon="FILE_FOLDER").folder_path = self.get_plugget_path("INSTALLED_DIR")
-            row.operator("util.open_folder", text="settings", icon="FILE_FOLDER").folder_path = self.get_plugget_path("PLUGGET_DIR")
-            row.operator("util.open_folder", text="temp", icon="FILE_FOLDER").folder_path = self.get_plugget_path("TEMP_PLUGGET")
+
+            # Add a checkbox to toggle advanced mode
+            row.prop(self, "advanced_mode", text="Advanced")
+
+            if self.advanced_mode:
+                local_script_dir = bpy.utils.script_path_user()
+                local_addons_dir = str(Path(local_script_dir) / "addons")
+                # hide button sunder a dropwdown
+                row.operator("util.open_folder", text="blender addons", icon="BLENDER").folder_path = local_addons_dir
+                row.operator("util.open_folder", text="package configs", icon="FILE_FOLDER").folder_path = self.get_plugget_path("INSTALLED_DIR")
+                row.operator("util.open_folder", text="plugget settings", icon="FILE_FOLDER").folder_path = self.get_plugget_path("PLUGGET_DIR")
+                row.operator("util.open_folder", text="plugget temp", icon="FILE_FOLDER").folder_path = self.get_plugget_path("TEMP_PLUGGET")
 
             row = layout.row()
             search_btn = row.operator("plugget.search_packages", text="Search")
