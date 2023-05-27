@@ -183,6 +183,7 @@ class PluggetPreferences(bpy.types.AddonPreferences):
         # | Short description    |          |
         # +----------------------+----------+
 
+        global packages_found
         for meta_packages in packages_found:
             row = layout.row()
             row.label(text=meta_packages.package_name)
@@ -195,13 +196,11 @@ class PluggetPreferences(bpy.types.AddonPreferences):
                 # update_btn = row.operator("plugget.update_package", text="Update")  # todo
                 uninstall_row = row.row()
                 uninstall_row.alert = True  # color the button red
-                uninstall_btn = uninstall_row.operator("plugget.uninstall_package", text="Uninstall")
-                uninstall_btn.package_name = meta_packages.package_name
-                uninstall_btn.tooltip = meta_packages.description if hasattr(meta_packages, "description") else meta_packages.package_name
+                button = uninstall_row.operator(UninstallPluggetPackageOperator.bl_idname, text="Uninstall")
             else:
-                install_btn = row.operator("plugget.install_package", text="Install")
-                install_btn.package_name = meta_packages.package_name
-                install_btn.tooltip = meta_packages.description if hasattr(meta_packages, "description") else meta_packages.package_name
+                button = row.operator(InstallPluggetPackageOperator.bl_idname, text="Install")
+            button.package_name = meta_packages.package_name
+            button.tooltip = meta_packages.description if hasattr(meta_packages, "description") else meta_packages.package_name
 
 
 class InstallPluggetOperator(bpy.types.Operator):
@@ -223,10 +222,12 @@ class InstallPluggetPackageOperator(bpy.types.Operator):
         description="package name",
         default=""
     )
-    tooltip: bpy.props.StringProperty()
+    tooltip: bpy.props.StringProperty()  # dynamic tooltip
+    # meta_package: "plugget.MetaPackage"
 
     @classmethod
     def description(cls, context, properties):
+        """return the tooltip for the operator, which overrides self.__class__.__doc__"""
         return f"Install {properties.tooltip}"
 
     def execute(self, context):
@@ -244,10 +245,11 @@ class UninstallPluggetPackageOperator(bpy.types.Operator):
         description="package name",
         default=""
     )
-    tooltip: bpy.props.StringProperty()
+    tooltip: bpy.props.StringProperty()  # dynamic tooltip
     
     @classmethod
     def description(cls, context, properties):
+        """return the tooltip for the operator, which overrides self.__class__.__doc__"""
         return f"Uninstall {properties.tooltip}"
 
     def execute(self, context):
