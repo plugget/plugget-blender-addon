@@ -164,9 +164,10 @@ class PluggetPreferences(bpy.types.AddonPreferences):
                 # if package.is_installed:
                     # update_btn = row.operator("plugget.update_package", text="Update")  # todo
                     uninstall_row = row.row()
-                    uninstall_row.alert = True
+                    uninstall_row.alert = True  # color the button red
                     uninstall_btn = uninstall_row.operator("plugget.uninstall_package", text="Uninstall")
                     uninstall_btn.package_name = meta_packages.package_name
+                    uninstall_btn.tooltip = meta_packages.description if hasattr(meta_packages, "description") else meta_packages.package_name
                 else:
                     install_btn = row.operator("plugget.install_package", text="Install")
                     install_btn.package_name = meta_packages.package_name
@@ -198,6 +199,7 @@ class PluggetPreferences(bpy.types.AddonPreferences):
 
 
 class InstallPluggetOperator(bpy.types.Operator):
+    """Install the Plugget Python module"""    
     bl_idname = "plugget.install_plugget"
     bl_label = "Install the Plugget Python module"
 
@@ -207,6 +209,7 @@ class InstallPluggetOperator(bpy.types.Operator):
 
 
 class InstallPluggetPackageOperator(bpy.types.Operator):
+    """Install a Plugget Package"""
     bl_idname = "plugget.install_package"
     bl_label = "Install a Plugget Package"
     package_name: bpy.props.StringProperty(
@@ -216,17 +219,19 @@ class InstallPluggetPackageOperator(bpy.types.Operator):
     )
     tooltip: bpy.props.StringProperty()
 
+    @classmethod
+    def description(cls, context, properties):
+        return f"Install {properties.tooltip}"
+
     def execute(self, context):
         import plugget.commands as cmd
         cmd.install(self.package_name) # todo output log
         return {'FINISHED'}
 
-    @classmethod
-    def description(cls, context, properties):
-        return properties.tooltip
 
 
 class UninstallPluggetPackageOperator(bpy.types.Operator):
+    """Uninstall a Plugget Package"""
     bl_idname = "plugget.uninstall_package"
     bl_label = "Uninstall a Plugget Package"
     package_name: bpy.props.StringProperty(
@@ -234,6 +239,11 @@ class UninstallPluggetPackageOperator(bpy.types.Operator):
         description="package name",
         default=""
     )
+    tooltip: bpy.props.StringProperty()
+    
+    @classmethod
+    def description(cls, context, properties):
+        return f"Uninstall {properties.tooltip}"
 
     def execute(self, context):
         import plugget.commands as cmd
@@ -243,6 +253,7 @@ class UninstallPluggetPackageOperator(bpy.types.Operator):
 
 
 class SearchPluggetPackageOperator(bpy.types.Operator):
+    """Search Plugget Packages"""
     bl_idname = "plugget.search_packages"
     bl_label = "Search Plugget Packages"
 
@@ -256,6 +267,7 @@ class SearchPluggetPackageOperator(bpy.types.Operator):
     
 
 class ListPluggetPackageOperator(bpy.types.Operator):
+    """List installed Plugget Packages"""
     bl_idname = "plugget.list_packages"
     bl_label = "list Plugget Packages"
 
@@ -268,6 +280,7 @@ class ListPluggetPackageOperator(bpy.types.Operator):
         return {'FINISHED'}
 
 class OpenFolderOperator(bpy.types.Operator):
+    """Open a folder in file explorer"""
     bl_idname = "util.open_folder"
     bl_label = "Open Folder"
     bl_icon = "FILE_FOLDER"
