@@ -149,8 +149,8 @@ class PluggetPreferences(bpy.types.AddonPreferences):
                 row.operator("util.open_folder", text="plugget temp", icon="FILE_FOLDER").folder_path = self.get_plugget_path("TEMP_PLUGGET")
 
             row = layout.row()
-            list_btn = row.operator("plugget.list_packages", text="List installed packages")
-            search_btn = row.operator("plugget.search_packages", text="Search packages", icon="VIEWZOOM")
+            list_btn = row.operator("plugget.list_packages", text="List installed", icon="COLLAPSEMENU")
+            search_btn = row.operator("plugget.search_packages", text="Search", icon="VIEWZOOM")
             search_txt = row.prop(self, "text_input")
 
             for meta_packages in packages_found:
