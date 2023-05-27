@@ -143,10 +143,10 @@ class PluggetPreferences(bpy.types.AddonPreferences):
                 local_script_dir = bpy.utils.script_path_user()
                 local_addons_dir = str(Path(local_script_dir) / "addons")
                 # hide button sunder a dropwdown
-                row.operator("util.open_folder", text="blender addons", icon="BLENDER").folder_path = local_addons_dir
-                row.operator("util.open_folder", text="package configs", icon="FILE_FOLDER").folder_path = self.get_plugget_path("INSTALLED_DIR")
-                row.operator("util.open_folder", text="plugget settings", icon="FILE_FOLDER").folder_path = self.get_plugget_path("PLUGGET_DIR")
-                row.operator("util.open_folder", text="plugget temp", icon="FILE_FOLDER").folder_path = self.get_plugget_path("TEMP_PLUGGET")
+                row.operator(OpenFolderOperator.bl_idname, text="blender addons", icon="BLENDER").folder_path = local_addons_dir
+                row.operator(OpenFolderOperator.bl_idname, text="package configs", icon="FILE_FOLDER").folder_path = self.get_plugget_path("INSTALLED_DIR")
+                row.operator(OpenFolderOperator.bl_idname, text="plugget settings", icon="FILE_FOLDER").folder_path = self.get_plugget_path("PLUGGET_DIR")
+                row.operator(OpenFolderOperator.bl_idname, text="plugget temp", icon="FILE_FOLDER").folder_path = self.get_plugget_path("TEMP_PLUGGET")
 
             row = layout.row()
             list_btn = row.operator("plugget.list_packages", text="List installed", icon="COLLAPSEMENU")
