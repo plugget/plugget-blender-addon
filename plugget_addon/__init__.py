@@ -128,8 +128,11 @@ class PluggetPreferences(bpy.types.AddonPreferences):
 
         if plugget_is_installed():
             row = layout.row()
-            row.label(text="dev folders:")
-            row.operator("util.open_folder", text="installed packages", icon="FILE_FOLDER").folder_path = self.get_plugget_path("INSTALLED_DIR")
+            
+            local_script_dir = bpy.utils.script_path_user()
+            local_addons_dir = Path(local_script_dir) / "addons"
+            row.operator("util.open_folder", text="addons", icon="FILE_FOLDER").folder_path = local_addons_dir
+            row.operator("util.open_folder", text="package configs", icon="FILE_FOLDER").folder_path = self.get_plugget_path("INSTALLED_DIR")
             row.operator("util.open_folder", text="settings", icon="FILE_FOLDER").folder_path = self.get_plugget_path("PLUGGET_DIR")
             row.operator("util.open_folder", text="temp", icon="FILE_FOLDER").folder_path = self.get_plugget_path("TEMP_PLUGGET")
 
