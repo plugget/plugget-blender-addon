@@ -135,8 +135,6 @@ class PluggetPreferences(bpy.types.AddonPreferences):
 
         if plugget_is_installed():
             row = layout.row()
-                
-            
 
             # Add a checkbox to toggle advanced mode
             row.prop(self, "advanced_mode", text="Advanced")
@@ -151,9 +149,9 @@ class PluggetPreferences(bpy.types.AddonPreferences):
                 row.operator("util.open_folder", text="plugget temp", icon="FILE_FOLDER").folder_path = self.get_plugget_path("TEMP_PLUGGET")
 
             row = layout.row()
-            search_btn = row.operator("plugget.search_packages", text="Search")
+            list_btn = row.operator("plugget.list_packages", text="List installed packages")
+            search_btn = row.operator("plugget.search_packages", text="Search packages", icon="VIEWZOOM")
             search_txt = row.prop(self, "text_input")
-            # todo row.scale_x = 2
 
             for meta_packages in packages_found:
                 row = layout.row()
@@ -255,7 +253,19 @@ class SearchPluggetPackageOperator(bpy.types.Operator):
         result = cmd.search(addon_prefs.text_input)
         packages_found = result
         return {'FINISHED'}
+    
 
+class ListPluggetPackageOperator(bpy.types.Operator):
+    bl_idname = "plugget.list_packages"
+    bl_label = "list Plugget Packages"
+
+    def execute(self, context):
+        import plugget.commands as cmd
+        global packages_found
+        addon_prefs = context.preferences.addons[__name__].preferences
+        result = cmd.list()
+        packages_found = result
+        return {'FINISHED'}
 
 class OpenFolderOperator(bpy.types.Operator):
     bl_idname = "util.open_folder"
@@ -280,6 +290,7 @@ class OpenFolderOperator(bpy.types.Operator):
 def register():
     bpy.utils.register_class(PluggetPreferences)
     bpy.utils.register_class(SearchPluggetPackageOperator)
+    bpy.utils.register_class(ListPluggetPackageOperator)
     bpy.utils.register_class(InstallPluggetPackageOperator)
     bpy.utils.register_class(UninstallPluggetPackageOperator)
     bpy.utils.register_class(InstallPluggetOperator)
@@ -290,31 +301,8 @@ def register():
 def unregister():
     bpy.utils.unregister_class(PluggetPreferences)
     bpy.utils.unregister_class(SearchPluggetPackageOperator)
+    bpy.utils.unregister_class(ListPluggetPackageOperator)
     bpy.utils.unregister_class(InstallPluggetPackageOperator)
     bpy.utils.unregister_class(UninstallPluggetPackageOperator)
     bpy.utils.unregister_class(InstallPluggetOperator)
     bpy.utils.unregister_class(OpenFolderOperator)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
