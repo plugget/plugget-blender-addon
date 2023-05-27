@@ -153,40 +153,10 @@ class PluggetPreferences(bpy.types.AddonPreferences):
             search_btn = row.operator("plugget.search_packages", text="Search", icon="VIEWZOOM")
             search_txt = row.prop(self, "text_input")
 
-            for meta_packages in packages_found:
-                row = layout.row()
-                row.label(text=meta_packages.package_name)
-
-                # meta_packages
-                # row.label(text=package.version) # todo replace with dropdown
-
-                if any(x.is_installed for x in meta_packages.packages):
-                # if package.is_installed:
-                    # update_btn = row.operator("plugget.update_package", text="Update")  # todo
-                    uninstall_row = row.row()
-                    uninstall_row.alert = True  # color the button red
-                    uninstall_btn = uninstall_row.operator("plugget.uninstall_package", text="Uninstall")
-                    uninstall_btn.package_name = meta_packages.package_name
-                    uninstall_btn.tooltip = meta_packages.description if hasattr(meta_packages, "description") else meta_packages.package_name
-                else:
-                    install_btn = row.operator("plugget.install_package", text="Install")
-                    install_btn.package_name = meta_packages.package_name
-                    install_btn.tooltip = meta_packages.description if hasattr(meta_packages, "description") else meta_packages.package_name
-
-            # +----------------------+----------+
-            # |        Search        |  Update  |
-            # +----------------------+----------+
-            # | Package A v1.0       | Install  |
-            # | Short description    |          |
-            # +----------------------+----------+
-            # | Package B v1.2       | Install  |
-            # | Short description    |          |
-            # +----------------------+----------+
-            # | Package C v2.1       | Update   |
-            # | Short description    |          |
-            # +----------------------+----------+
+            self._draw_package_list(layout) 
 
         else:
+            # If plugget isn't installed, draw a button to install it
             layout.operator("plugget.install_plugget", text="Install Plugget (requires internet connection)")
 
             for l in output_log.splitlines():
@@ -196,6 +166,42 @@ class PluggetPreferences(bpy.types.AddonPreferences):
                     col.label(text=l)
                 else:
                     layout.label(text=l)
+
+    def _draw_package_list(self, layout):
+        """Draw UI for packages found"""
+        
+        # +----------------------+----------+
+        # |        Search        |  Update  |
+        # +----------------------+----------+
+        # | Package A v1.0       | Install  |
+        # | Short description    |          |
+        # +----------------------+----------+
+        # | Package B v1.2       | Install  |
+        # | Short description    |          |
+        # +----------------------+----------+
+        # | Package C v2.1       | Update   |
+        # | Short description    |          |
+        # +----------------------+----------+
+
+        for meta_packages in packages_found:
+            row = layout.row()
+            row.label(text=meta_packages.package_name)
+
+            # meta_packages
+            # row.label(text=package.version) # todo replace with dropdown
+
+            if any(x.is_installed for x in meta_packages.packages):
+            # if package.is_installed:
+                # update_btn = row.operator("plugget.update_package", text="Update")  # todo
+                uninstall_row = row.row()
+                uninstall_row.alert = True  # color the button red
+                uninstall_btn = uninstall_row.operator("plugget.uninstall_package", text="Uninstall")
+                uninstall_btn.package_name = meta_packages.package_name
+                uninstall_btn.tooltip = meta_packages.description if hasattr(meta_packages, "description") else meta_packages.package_name
+            else:
+                install_btn = row.operator("plugget.install_package", text="Install")
+                install_btn.package_name = meta_packages.package_name
+                install_btn.tooltip = meta_packages.description if hasattr(meta_packages, "description") else meta_packages.package_name
 
 
 class InstallPluggetOperator(bpy.types.Operator):
@@ -227,7 +233,6 @@ class InstallPluggetPackageOperator(bpy.types.Operator):
         import plugget.commands as cmd
         cmd.install(self.package_name) # todo output log
         return {'FINISHED'}
-
 
 
 class UninstallPluggetPackageOperator(bpy.types.Operator):
@@ -278,6 +283,7 @@ class ListPluggetPackageOperator(bpy.types.Operator):
         result = cmd.list()
         packages_found = result
         return {'FINISHED'}
+
 
 class OpenFolderOperator(bpy.types.Operator):
     """Open a folder in file explorer"""
