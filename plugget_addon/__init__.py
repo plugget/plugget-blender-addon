@@ -191,6 +191,14 @@ class PluggetPreferences(bpy.types.AddonPreferences):
             # meta_packages
             # row.label(text=package.version) # todo replace with dropdown
 
+            # Add a button to open a URL
+            url_button = row.operator("wm.url_open", text="", icon="URL")
+            url =  meta_packages.repo_url
+            if url:
+                url_button.url = url
+            else:
+                url_button.enabled = False
+            
             if any(x.is_installed for x in meta_packages.packages):
             # if package.is_installed:
                 # update_btn = row.operator("plugget.update_package", text="Update")  # todo
