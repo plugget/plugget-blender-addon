@@ -28,3 +28,5 @@ If something failed you can always try again by clicking the install button, or 
   
 </details>
 
+### community
+- blenderartists [thread](https://blenderartists.org/t/plugget-a-search-engine-installer-for-add-ons/1456558)
