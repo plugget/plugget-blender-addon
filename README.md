@@ -32,3 +32,7 @@ If something failed you can always try again by clicking the install button, or 
 
 ### community
 - blenderartists [thread](https://blenderartists.org/t/plugget-a-search-engine-installer-for-add-ons/1456558)
+
+
+If this tool is helpfull, you can ⭐ star it on the github page,
+just click the ⭐ star button in the top-right of this page.
