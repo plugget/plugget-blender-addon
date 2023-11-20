@@ -1,4 +1,4 @@
-⚠️ For a more advanced & up-to-date UI, see the [plugget qt addon](https://github.com/plugget/plugget-qt-addon)  
+⚠️ For a more advanced & up-to-date UI, see the [plugget qt addon](https://github.com/plugget/plugget-qt-addon) repo  
 This repo is not actively developed anymore  
 
 # Plugget installer add-on
