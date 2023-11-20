@@ -10,7 +10,8 @@ For a more advanced UI, see the [plugget qt addon](https://github.com/plugget/pl
 <details>
 <summary>Using the blend file installer (recommended)</summary>
 
-Download and open the [blend file](https://github.com/hannesdelbeke/plugget-blender-addon/raw/main/installer/install_plugget_addon.blend), and run the scripts inside to auto install the add-on.
+- Download and open the [blend file](https://github.com/hannesdelbeke/plugget-blender-addon/raw/main/installer/install_plugget_addon.blend), and run the scripts inside to auto install the add-on.
+- Or run [this](https://github.com/plugget/plugget-blender-addon/blob/main/installer/auto_install_addon.py) code in Blender
   
 </details>
 
