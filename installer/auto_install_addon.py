@@ -19,7 +19,7 @@ from pathlib import Path
 
 # Define the URL of the repo and the file to be downloaded
 # Download the repo and save it as a zip file
-url = "https://github.com/hannesdelbeke/plugget-blender-addon/archive/refs/heads/main.zip"
+url = "https://github.com/plugget/plugget-blender-addon/archive/refs/heads/main.zip"
 filename = "main.zip"
 urllib.request.urlretrieve(url, filename)
 
