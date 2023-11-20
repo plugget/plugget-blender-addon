@@ -1,7 +1,9 @@
+For a more advanced & up-to-date UI, see the [plugget qt addon](https://github.com/plugget/plugget-qt-addon)  
+This repo is not actively developed  
+
 # Plugget installer add-on
 A Blender add-on to install [plugget](https://github.com/hannesdelbeke/plugget) packages.<br>
 It uses native Blender UI with minimal dependencies to provide a simple but stable addon to get started with plugget.<br>
-For a more advanced UI, see the [plugget qt addon](https://github.com/plugget/plugget-qt-addon) (WIP)
 
 <img src="https://user-images.githubusercontent.com/3758308/228056063-2c98f14b-1aea-4150-90b1-d8a0599e6b08.png" width="600"></img>
 
