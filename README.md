@@ -1,5 +1,5 @@
 ⚠️ For a more advanced & up-to-date UI, see the [plugget qt addon](https://github.com/plugget/plugget-qt-addon)  
-This repo is not actively developed  
+This repo is not actively developed anymore  
 
 # Plugget installer add-on
 A Blender add-on to install [plugget](https://github.com/hannesdelbeke/plugget) packages.<br>
