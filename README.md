@@ -8,6 +8,9 @@ It uses native Blender UI with minimal dependencies to provide a simple but stab
 <img src="https://user-images.githubusercontent.com/3758308/228056063-2c98f14b-1aea-4150-90b1-d8a0599e6b08.png" width="600"></img>
 
 ## Installation
+Before install, ensure you have:
+- [Git for Windows](https://git-scm.com/download/win) installed
+- Windows OS
 
 <details>
 <summary>Using the blend file installer (recommended)</summary>
