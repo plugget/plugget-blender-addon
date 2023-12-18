@@ -29,8 +29,9 @@ def _register_plugget_config():
     """register the addon's plugget-config with plugget"""
     import importlib.resources
     import plugget.settings
-    settings_path = importlib.resources.path('plugget_addon.resources', 'config.json')
-    plugget.settings.registered_settings_paths.add(settings_path)
+    with importlib.resources.path('plugget_addon.resources', 'config.json') as p:
+        settings_path = Path(p)
+        plugget.settings.registered_settings_paths.add(settings_path)
 
 
 def get_latest_version(package_name):
