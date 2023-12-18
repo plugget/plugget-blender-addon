@@ -25,6 +25,14 @@ output_log = "Installing..."
 packages_found = []
 
 
+def _register_plugget_config():
+    """register the addon's plugget-config with plugget"""
+    import importlib.resources
+    import plugget.settings
+    settings_path = importlib.resources.path('plugget_addon.resources', 'config.json')
+    plugget.settings.registered_settings_paths.add(settings_path)
+
+
 def get_latest_version(package_name):
     """get the latest version number for a package on PyPi"""
     url = f"https://pypi.org/pypi/{package_name}/json"
@@ -60,6 +68,9 @@ def latest_plugget_is_installed():
 
 
 def install_plugget():
+    """
+    PIP install plugget & it's dependencies if not already installed
+    """
     global output_log
 
     if latest_plugget_is_installed():
@@ -325,6 +336,7 @@ def register():
     bpy.utils.register_class(InstallPluggetOperator)
     bpy.utils.register_class(OpenFolderOperator)
     install_plugget()
+    _register_plugget_config()
 
 
 def unregister():
