@@ -16,6 +16,8 @@ import shutil
 import tempfile
 import bpy
 from pathlib import Path
+from addon_utils import enable
+import importlib
 
 # Define the URL of the repo and the file to be downloaded
 # Download the repo and save it as a zip file
@@ -36,10 +38,8 @@ with tempfile.TemporaryDirectory() as tmpdir:
     target_path = os.path.join(local_addons_dir, "plugget_addon")
     shutil.move(source_path, target_path)
 
+# refresh installed py modules
+importlib.invalidate_caches()
+
 # Enable the addon in Blender
-import bpy
-
-bpy.ops.preferences.addon_enable(module="plugget_addon")
-
-# Refresh all addons
-bpy.ops.preferences.addon_refresh()
+enable("plugget_addon")
