@@ -1,7 +1,7 @@
 ⚠️ For a more advanced UI, see the [plugget qt addon](https://github.com/plugget/plugget-qt-addon) repo  
 
 # Plugget installer add-on
-A Blender add-on to install [plugget](https://github.com/hannesdelbeke/plugget) packages.<br>
+A Blender add-on to install [plugget](https://github.com/plugget/plugget) packages.<br>
 It uses native Blender UI with minimal dependencies to provide a simple but stable addon to get started with plugget.<br>
 
 <img src="https://user-images.githubusercontent.com/3758308/228056063-2c98f14b-1aea-4150-90b1-d8a0599e6b08.png" width="600"></img>
@@ -14,7 +14,7 @@ Before install, ensure you have:
 <details>
 <summary>Using the blend file installer (recommended)</summary>
 
-- Download and open the [blend file](https://github.com/hannesdelbeke/plugget-blender-addon/raw/main/installer/install_plugget_addon.blend), and run the scripts inside to auto install the add-on.
+- Download and open the [blend file](https://github.com/plugget/plugget-blender-addon/raw/main/installer/install_plugget_addon.blend), and run the scripts inside to auto install the add-on.
 - Or run [this](https://github.com/plugget/plugget-blender-addon/blob/main/installer/auto_install_addon.py) code in Blender
   
 </details>
